@@ -1,4 +1,4 @@
-package com.example.chatapp.feature.splash
+package com.example.chatapp.ui.screens.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,7 +14,7 @@ import com.example.chatapp.R
 import com.example.chatapp.ui.theme.Gradient
 
 @Composable
-fun SplashScreen() {
+fun SplashScreenUI() {
     Box(
         modifier = Modifier
             .fillMaxSize()
