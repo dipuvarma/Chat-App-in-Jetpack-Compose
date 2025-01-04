@@ -10,4 +10,7 @@ object SplashScreen
 object LoginScreen
 
 @Serializable
-object EditProfileScreen
+data class EditProfileScreen(
+    val email: String,
+    val name: String
+)

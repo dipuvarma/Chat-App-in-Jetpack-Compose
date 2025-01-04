@@ -62,17 +62,19 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("com.google.firebase:firebase-auth:23.1.0")
-    implementation("com.google.firebase:firebase-auth-ktx:23.1.0")
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.firebaseui:firebase-ui-auth:7.2.0")
+    //for firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.firestore)
+
 
     //Navigation
     implementation(libs.androidx.navigation.compose)
     //Serialization
     implementation(libs.kotlinx.serialization.json)
-
+     // FOr Icon
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.5")
 
 
 }

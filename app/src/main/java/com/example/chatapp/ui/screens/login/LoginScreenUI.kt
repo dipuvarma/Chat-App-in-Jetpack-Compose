@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
+import com.example.chatapp.ui.navigation.EditProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreenUI() {
+fun LoginScreenUI(navController: NavHostController) {
     val context = LocalContext.current
 
     Scaffold(topBar = {
@@ -39,6 +41,7 @@ fun LoginScreenUI() {
             SignInWithGoogleButton(
                 onSuccess = { user ->
                     Toast.makeText(context, "Sign-in as ${user.email}", Toast.LENGTH_SHORT).show()
+                    navController.navigate(EditProfileScreen(email = "${user.email}", name = "${user.displayName}"))
                 }, onError = { user ->
                     Toast.makeText(context, "Error : ${user?.message}", Toast.LENGTH_SHORT).show()
                 })

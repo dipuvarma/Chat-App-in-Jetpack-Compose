@@ -1,10 +1,6 @@
 package com.example.chatapp.ui.screens.editProfile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,16 +12,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -34,17 +30,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.chatapp.domain.model.Gender
+import com.example.chatapp.domain.model.User
+import com.streamliners.compose.comp.textInput.TextInputLayout
+import com.streamliners.compose.comp.textInput.config.InputConfig
+import com.streamliners.compose.comp.textInput.config.text
+import com.streamliners.compose.comp.textInput.state.TextInputState
+import com.streamliners.compose.comp.textInput.state.allHaveValidInputs
+import com.streamliners.compose.comp.textInput.state.value
+import kotlinx.coroutines.launch
 
-@Preview(showSystemUi = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfileScreenUI() {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var bio by remember { mutableStateOf("") }
+fun EditProfileScreenUI(
+    userEmail: String,
+    userName: String,
+    viewModel: EditProfileViewModel = viewModel(),
+) {
+
+    var gender by remember { mutableStateOf<Gender?>(null) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,8 +65,27 @@ fun EditProfileScreenUI() {
                     titleContentColor = Color.White
                 )
             )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     ) { paddingValues ->
+        val bioInput = remember {
+            mutableStateOf(
+                TextInputState(
+                    label = "Bio",
+                    inputConfig = InputConfig.text {
+                        optional = true
+                        minLength = 10
+                        maxLength = 50
+                    }
+                )
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,8 +95,9 @@ fun EditProfileScreenUI() {
         ) {
             OutlinedTextField(
                 modifier = Modifier.fillMaxSize(),
-                value = name,
-                onValueChange = { name = it },
+                value = userName,
+                onValueChange = { },
+                readOnly = true,
                 label = { Text(text = "Name") },
                 leadingIcon = {
                     Icon(
@@ -81,8 +112,9 @@ fun EditProfileScreenUI() {
 
             OutlinedTextField(
                 modifier = Modifier.fillMaxSize(),
-                value = email,
-                onValueChange = { email = it },
+                value = userEmail,
+                onValueChange = { },
+                readOnly = true,
                 label = { Text(text = "Email") },
                 leadingIcon = {
                     Icon(
@@ -95,29 +127,65 @@ fun EditProfileScreenUI() {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
-                modifier = Modifier.fillMaxSize(),
-                value = bio,
-                onValueChange = { bio = it },
-                label = { Text(text = "Bio") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "Person",
-                        tint = MaterialTheme.colorScheme.primary
+            TextInputLayout(state = bioInput)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                shape = RoundedCornerShape(8)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Gender",
+                        fontSize = 16.sp
+                    )
+                    LabelledRadioButton(
+                        label = "Male",
+                        color = Color.Black,
+                        selected = gender == Gender.Male,
+                        onClick = { gender = Gender.Male }
+                    )
+                    LabelledRadioButton(
+                        label = "Female",
+                        selected = gender == Gender.Female,
+                        onClick = { gender = Gender.Female },
+                        color = Color.Black
                     )
                 }
-            )
+            }
 
-            Spacer(modifier = Modifier.height(8.dp))
-            GenderSelection()
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
             Button(
-                modifier = Modifier.align(
-                    alignment = Alignment.CenterHorizontally
-                ),
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally),
                 onClick = {
-
+                    if (
+                        TextInputState.allHaveValidInputs(
+                            bioInput
+                        )
+                    ) {
+                        gender.let {
+                            val user = User(
+                                name = userName,
+                                email = userEmail,
+                                bio = bioInput.value(),
+                                gender = it!!
+                            )
+                            viewModel.saveUser(user) {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Your Profile Save Successfully")
+                                }
+                            }
+                        }
+                    }
                 }
             ) {
                 Text(
