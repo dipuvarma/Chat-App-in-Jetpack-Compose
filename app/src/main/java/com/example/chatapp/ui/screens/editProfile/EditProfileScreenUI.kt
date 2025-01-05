@@ -1,6 +1,5 @@
 package com.example.chatapp.ui.screens.editProfile
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,9 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.chatapp.domain.model.Gender
 import com.example.chatapp.domain.model.User
+import com.example.chatapp.ui.navigation.HomeScreen
 import com.streamliners.compose.comp.textInput.TextInputLayout
 import com.streamliners.compose.comp.textInput.config.InputConfig
 import com.streamliners.compose.comp.textInput.config.text
@@ -43,13 +43,15 @@ import com.streamliners.compose.comp.textInput.state.TextInputState
 import com.streamliners.compose.comp.textInput.state.allHaveValidInputs
 import com.streamliners.compose.comp.textInput.state.value
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreenUI(
     userEmail: String,
     userName: String,
-    viewModel: EditProfileViewModel = viewModel(),
+    viewModel: EditProfileViewModel,
+    navController : NavController
 ) {
 
     var gender by remember { mutableStateOf<Gender?>(null) }
@@ -198,6 +200,7 @@ fun EditProfileScreenUI(
                     if (gender == null){
                         genderError = true
                     }
+                    navController.navigate(HomeScreen)
                 }
             ) {
                 Text(

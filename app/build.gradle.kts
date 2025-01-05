@@ -74,7 +74,16 @@ dependencies {
     //Serialization
     implementation(libs.kotlinx.serialization.json)
      // FOr Icon
-    implementation("androidx.compose.material:material-icons-extended-android:1.7.5")
+    implementation(libs.androidx.material.icons.extended.android)
+    //For DataStore
+    implementation(libs.androidx.datastore.preferences)
+    //FOr gson
+    implementation (libs.gson)
+    //For Koin
+    implementation(libs.koin.android)
+
+
+
 
 
 }

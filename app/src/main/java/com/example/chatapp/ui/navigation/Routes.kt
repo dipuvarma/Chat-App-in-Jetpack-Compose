@@ -14,3 +14,5 @@ data class EditProfileScreen(
     val email: String,
     val name: String
 )
+@Serializable
+object HomeScreen
