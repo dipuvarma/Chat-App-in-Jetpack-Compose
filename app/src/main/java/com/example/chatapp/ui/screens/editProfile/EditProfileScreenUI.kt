@@ -1,5 +1,6 @@
 package com.example.chatapp.ui.screens.editProfile
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +53,11 @@ fun EditProfileScreenUI(
 ) {
 
     var gender by remember { mutableStateOf<Gender?>(null) }
+    var genderError by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = gender) {
+        if(gender != null) genderError = false
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -158,6 +164,9 @@ fun EditProfileScreenUI(
                         onClick = { gender = Gender.Female },
                         color = Color.Black
                     )
+                    if (genderError == true){
+                        Text(text = "Required")
+                    }
                 }
             }
 
@@ -185,6 +194,9 @@ fun EditProfileScreenUI(
                                 }
                             }
                         }
+                    }
+                    if (gender == null){
+                        genderError = true
                     }
                 }
             ) {
