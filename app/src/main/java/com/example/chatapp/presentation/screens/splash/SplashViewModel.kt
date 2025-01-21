@@ -1,11 +1,11 @@
-package com.example.chatapp.ui.screens.splash
+package com.example.chatapp.presentation.screens.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.chatapp.data.LocalRepo
-import com.example.chatapp.ui.navigation.HomeScreen
-import com.example.chatapp.ui.navigation.LoginScreen
+import com.example.chatapp.presentation.navigation.HomeScreen
+import com.example.chatapp.presentation.navigation.LoginScreen
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

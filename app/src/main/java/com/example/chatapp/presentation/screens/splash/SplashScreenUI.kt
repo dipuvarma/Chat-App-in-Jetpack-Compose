@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.screens.splash
+package com.example.chatapp.presentation.screens.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

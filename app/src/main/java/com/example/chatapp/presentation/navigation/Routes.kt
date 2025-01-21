@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.navigation
+package com.example.chatapp.presentation.navigation
 
 import kotlinx.serialization.Serializable
 

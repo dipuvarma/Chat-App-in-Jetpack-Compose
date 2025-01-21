@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.screens.editProfile
+package com.example.chatapp.presentation.screens.editProfile
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,17 +22,23 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.chatapp.domain.model.Gender
 import com.example.chatapp.domain.model.User
-import com.example.chatapp.ui.navigation.HomeScreen
+import com.example.chatapp.presentation.navigation.HomeScreen
+import com.streamliners.compose.comp.select.RadioGroup
 import com.streamliners.compose.comp.textInput.TextInputLayout
 import com.streamliners.compose.comp.textInput.config.InputConfig
 import com.streamliners.compose.comp.textInput.config.text
@@ -43,26 +46,24 @@ import com.streamliners.compose.comp.textInput.state.TextInputState
 import com.streamliners.compose.comp.textInput.state.allHaveValidInputs
 import com.streamliners.compose.comp.textInput.state.value
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreenUI(
     userEmail: String,
-    userName: String,
     viewModel: EditProfileViewModel,
-    navController : NavController
+    navController: NavController
 ) {
 
-    var gender by remember { mutableStateOf<Gender?>(null) }
+    val gender = remember { mutableStateOf<Gender?>(null) }
+    //val gender = MutableState<Gender?>(null)
     var genderError by remember { mutableStateOf(false) }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = gender) {
-        if(gender != null) genderError = false
+        if (gender != null) genderError = false
     }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -76,11 +77,24 @@ fun EditProfileScreenUI(
         },
         snackbarHost = {
             SnackbarHost(
-                hostState = snackbarHostState,
+                hostState = snackBarHostState,
                 modifier = Modifier.fillMaxWidth()
             )
         }
     ) { paddingValues ->
+
+        val nameInput = remember {
+            mutableStateOf(
+                TextInputState(
+                    label = "Bio",
+                    inputConfig = InputConfig.text {
+                        optional = true
+                        minLength = 3
+                        maxLength = 20
+                    }
+                )
+            )
+        }
         val bioInput = remember {
             mutableStateOf(
                 TextInputState(
@@ -101,21 +115,9 @@ fun EditProfileScreenUI(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxSize(),
-                value = userName,
-                onValueChange = { },
-                readOnly = true,
-                label = { Text(text = "Name") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Person",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
+            TextInputLayout(
+                state = nameInput,
             )
-
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
@@ -139,36 +141,21 @@ fun EditProfileScreenUI(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                shape = RoundedCornerShape(8)
-            ) {
+            Card {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(
+                            horizontal = 12.dp,
+                            vertical = 8.dp
+                        )
                 ) {
-                    Text(
-                        text = "Gender",
-                        fontSize = 16.sp
+                    RadioGroup(
+                        title = "Gender",
+                        state = gender,
+                        options = Gender.entries.toList(),
+                        labelExtractor = { it.name }
                     )
-                    LabelledRadioButton(
-                        label = "Male",
-                        color = Color.Black,
-                        selected = gender == Gender.Male,
-                        onClick = { gender = Gender.Male }
-                    )
-                    LabelledRadioButton(
-                        label = "Female",
-                        selected = gender == Gender.Female,
-                        onClick = { gender = Gender.Female },
-                        color = Color.Black
-                    )
-                    if (genderError == true){
-                        Text(text = "Required")
-                    }
                 }
             }
 
@@ -180,32 +167,31 @@ fun EditProfileScreenUI(
                 onClick = {
                     if (
                         TextInputState.allHaveValidInputs(
-                            bioInput
+                            nameInput, bioInput
                         )
                     ) {
-                        gender.let {
+                        gender.value?.let {
                             val user = User(
-                                name = userName,
+                                name = nameInput.value(),
                                 email = userEmail,
                                 bio = bioInput.value(),
-                                gender = it!!
+                                gender = it
                             )
                             viewModel.saveUser(user) {
                                 coroutineScope.launch {
-                                    snackbarHostState.showSnackbar("Your Profile Save Successfully")
+                                    snackBarHostState.showSnackbar("Your Profile Save Successfully")
                                 }
                             }
                         }
+                        if (gender == null) {
+                            genderError = true
+                        }
+                        navController.navigate(HomeScreen)
                     }
-                    if (gender == null){
-                        genderError = true
-                    }
-                    navController.navigate(HomeScreen)
+
                 }
             ) {
-                Text(
-                    text = "Save"
-                )
+                Text(text = "Save")
             }
         }
     }

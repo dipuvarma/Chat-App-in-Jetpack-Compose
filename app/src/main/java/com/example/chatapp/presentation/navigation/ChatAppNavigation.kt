@@ -1,20 +1,19 @@
-package com.example.chatapp.ui.navigation
+package com.example.chatapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.example.chatapp.ui.home.HomeScreenUI
-import com.example.chatapp.ui.screens.editProfile.EditProfileScreenUI
-import com.example.chatapp.ui.screens.login.LoginScreenUI
-import com.example.chatapp.ui.screens.splash.SplashScreenUI
-import kotlinx.coroutines.delay
+import com.example.chatapp.presentation.screens.home.HomeScreenUI
+import com.example.chatapp.presentation.screens.editProfile.EditProfileScreenUI
+import com.example.chatapp.presentation.screens.login.LoginScreenUI
+import com.example.chatapp.presentation.screens.splash.SplashScreenUI
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ChatAppNavigation() {
+
     val navController = rememberNavController()
 
     NavHost(
@@ -33,13 +32,12 @@ fun ChatAppNavigation() {
         composable<EditProfileScreen> {
             val user = it.toRoute<EditProfileScreen>()
             EditProfileScreenUI(
-               viewModel =  koinViewModel(),
+                viewModel = koinViewModel(),
                 userEmail = user.email,
-               userName =  user.name,
                 navController = navController
             )
         }
-        composable<HomeScreen>{
+        composable<HomeScreen> {
             HomeScreenUI()
         }
     }

@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.screens.login
+package com.example.chatapp.presentation.screens.login
 
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult

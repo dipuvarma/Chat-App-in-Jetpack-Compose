@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.screens.login
+package com.example.chatapp.presentation.screens.login
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import com.example.chatapp.ui.navigation.EditProfileScreen
+import com.example.chatapp.presentation.navigation.EditProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +42,8 @@ fun LoginScreenUI(navController: NavHostController) {
                 onSuccess = { user ->
                     Toast.makeText(context, "Sign-in as ${user.email}", Toast.LENGTH_SHORT).show()
                     navController.navigate(EditProfileScreen(email = "${user.email}", name = "${user.displayName}"))
-                }, onError = { user ->
+                },
+                onError = { user ->
                     Toast.makeText(context, "Error : ${user?.message}", Toast.LENGTH_SHORT).show()
                 })
         }

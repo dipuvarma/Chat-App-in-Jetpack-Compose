@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.home
+package com.example.chatapp.presentation.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

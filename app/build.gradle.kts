@@ -44,6 +44,12 @@ android {
     }
 }
 
+configurations {
+    "implementation" {
+        exclude("org.jetbrains.compose.material", "material-desktop")
+    }
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -81,6 +87,8 @@ dependencies {
     implementation (libs.gson)
     //For Koin
     implementation(libs.koin.android)
+
+    implementation(libs.droidlibs.compose.android)
 
 
 
