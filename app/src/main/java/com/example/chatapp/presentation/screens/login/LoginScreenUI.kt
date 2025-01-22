@@ -20,7 +20,10 @@ import com.example.chatapp.presentation.navigation.EditProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreenUI(navController: NavHostController) {
+fun LoginScreenUI(
+    navController: NavHostController,
+    viewModel: LoginViewModel
+) {
     val context = LocalContext.current
 
     Scaffold(topBar = {
@@ -40,8 +43,9 @@ fun LoginScreenUI(navController: NavHostController) {
         ) {
             SignInWithGoogleButton(
                 onSuccess = { user ->
+                    viewModel.onLoggedIn(email = user.email.toString(), navController = navController)
+                    navController.navigate(EditProfileScreen(email = "${user.email}"))
                     Toast.makeText(context, "Sign-in as ${user.email}", Toast.LENGTH_SHORT).show()
-                    navController.navigate(EditProfileScreen(email = "${user.email}", name = "${user.displayName}"))
                 },
                 onError = { user ->
                     Toast.makeText(context, "Error : ${user?.message}", Toast.LENGTH_SHORT).show()

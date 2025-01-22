@@ -27,7 +27,10 @@ fun ChatAppNavigation() {
             )
         }
         composable<LoginScreen> {
-            LoginScreenUI(navController)
+            LoginScreenUI(
+                navController,
+                koinViewModel()
+            )
         }
         composable<EditProfileScreen> {
             val user = it.toRoute<EditProfileScreen>()

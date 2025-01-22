@@ -16,4 +16,14 @@ class UserRepo {
             .await()
     }
 
+    suspend fun getUserWithEmail(email: String): User? {
+        return Firebase.firestore
+            .userCollection()
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+            .toObjects(User::class.java)
+            .firstOrNull()
+    }
+
 }

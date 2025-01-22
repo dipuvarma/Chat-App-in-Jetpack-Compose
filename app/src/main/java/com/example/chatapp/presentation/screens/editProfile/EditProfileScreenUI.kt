@@ -85,7 +85,7 @@ fun EditProfileScreenUI(
         val nameInput = remember {
             mutableStateOf(
                 TextInputState(
-                    label = "Bio",
+                    label = "Name",
                     inputConfig = InputConfig.text {
                         optional = true
                         minLength = 3
@@ -187,7 +187,6 @@ fun EditProfileScreenUI(
                         }
                         navController.navigate(HomeScreen)
                     }
-
                 }
             ) {
                 Text(text = "Save")
