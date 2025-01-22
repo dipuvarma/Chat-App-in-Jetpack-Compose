@@ -20,7 +20,11 @@ class SplashViewModel @Inject constructor(
             if (localRepo.isLoggedIn()) {
                 navController.navigate(HomeScreen)
             } else {
-                navController.navigate(LoginScreen)
+                navController.navigate(LoginScreen){
+                    popUpTo(LoginScreen){
+                        inclusive = true
+                    }
+                }
             }
         }
     }

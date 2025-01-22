@@ -56,7 +56,6 @@ fun EditProfileScreenUI(
 ) {
 
     val gender = remember { mutableStateOf<Gender?>(null) }
-    //val gender = MutableState<Gender?>(null)
     var genderError by remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
